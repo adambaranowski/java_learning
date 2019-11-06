@@ -1,0 +1,58 @@
+###########KONFIGURACJA GITA################
+
+git config --global user.name “Imiê Nazwisko”
+git config --global user.email nazwisko@imie.com
+git config --global credential.helper "cache --timeout=3600"
+
+########NOWE REPO Z FOLDERU######
+#wchodzimy do danego folderu i robimy
+
+echo "# sdfa" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/adambaranowski/sdfa.git
+git push -u origin master
+
+#####WYSY£ANIE###########
+git add <nazwa pliku>
+git commit -am "komentarz"
+git push
+
+##########KLONOWANIE REPO DO FOLDERU##
+git clone <url>
+
+tworzenie ga³êzi powoduje utworzenie alternatywnej wersji aktualnego
+ repozytorium. Ga³¹Ÿ g³ówna nazywa siê najczêœciej master. 
+ Checkout ga³êzi oznacza, ¿e pliki danej ga³êzi zast¹pi¹ w naszym 
+ workspace pliki, które dotychczas siê tam 
+ znajdowa³y - oczywiœcie usuniête pliki nie zostan¹ utracone.
+
+Polecenie git branch wyœwietla dostêpne lokalnie ga³êzie. 
+Symbolem * oznaczona jest aktualnie checkoutowana ga³¹Ÿ. 
+Polecenie git branch -a wyœwietla wszystkie ga³êzie - 
+zarówno lokalne jak i dostêpne w Ÿródle, 
+z którego klonowaliœmy repozytorium (origin).
+
+W celu utworzenia nowej ga³êzi nale¿y wykonaæ polecenie
+ git branch <nazwa_galezi> lub w celu stworzenia 
+ i prze³¹czenia siê na now¹ ga³¹Ÿ git checkout -b <nazwa_galezi>.
+
+Typowy workflow dnia pracy programisty jest nastêpuj¹cy:
+
+git pull - œci¹gamy to co siê zmieni³o w nocy
+git checkout -b nazwaGalezi - robimy now¹ ga³¹Ÿ i na niej pracujemy
+git add . - dodajemy wszystkie pliki do indeksu
+git commit -am "Nowa funkcjonalnoœæ" - commitujemy zmiany
+git push -u origin myBranch - wysy³amy zmiany na serwer (-u powoduje, ¿e ga³¹Ÿ master staje siê rodzicem, idziemy do domu
+git pull - nastêpnego dnia œci¹gamy zmiany
+git checkout nazwaGalezi - prze³¹czamy siê na nasz¹ ga³¹Ÿ i pracujemy
+git checkout master - prze³¹czamy siê na ga³¹Ÿ master
+git merge nazwaGalezi - ³¹czymy ga³êzie master i nazwaGalezi. Tu mog¹ siê pojawiæ konflikty, które musimy rozwik³aæ!
+git commit -am "dodanie dowej funkcjonalnosci" - commitujemy zmiany
+git push - wysy³amy na serwer zdalny
+Workflow na laboratorium jest nieco inny. Poniewa¿ nie pracujemy nad kodem, a ga³êzie s³u¿¹ do trzymania indywidualnego kodu - nie bêdziemy do³¹czaæ do master naszej ga³êzi - lecz bêdziemy do naszej ga³êzi do³¹czaæ to, co zmieni³o siê w ga³êzi master.:
+
+JEDNORAZOWO nale¿y wykonaæ (chyba
+
+
