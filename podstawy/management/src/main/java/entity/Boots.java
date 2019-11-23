@@ -1,8 +1,8 @@
 package entity;
 
 public class Boots extends Product {
-    int size;
-    boolean isNaturalSkin;
+    private int size;
+    private boolean isNaturalSkin;
 
     public int getSize() {
         return size;

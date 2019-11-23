@@ -5,12 +5,7 @@ public class User{
     private String login;
     private String password;
 
-
-
-
-
     ///GETERY I SETERY///
-
 
     public long getId() {
         return id;
@@ -24,18 +19,6 @@ public class User{
         return password;
     }
 
-    /*public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-*/
     //GENERATOR//
 
     public User(long id, String login, String password) {
@@ -45,7 +28,6 @@ public class User{
     }
 
     @Override
-
     public String toString(){
         return "User{"+
                 "id=" + id +
