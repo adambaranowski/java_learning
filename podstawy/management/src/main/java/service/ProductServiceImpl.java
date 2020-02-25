@@ -5,19 +5,14 @@ import entity.Product;
 
 import java.util.ArrayList;
 import java.util.List;
-
 public class ProductServiceImpl implements ProductService {
-
     public List<Product> products;
-
     public ProductServiceImpl(){
         this.products = new ArrayList<Product>();
     }
-
     public ProductServiceImpl(List<Product> products){
         this.products = products;
     }
-
    @Override
     public List<Product> getAllProducts(){
         return products;
@@ -27,7 +22,6 @@ public class ProductServiceImpl implements ProductService {
     public Integer getNumberOfProducts(){
         return products.size();
     }
-
 
     @Override
     public Product getProductById(Long id){

@@ -1,4 +1,4 @@
-package entity;
+package obslugaplikow;
 
 public class Product {
     private long id;

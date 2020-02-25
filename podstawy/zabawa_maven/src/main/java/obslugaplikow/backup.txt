@@ -1,0 +1,12 @@
+Product{id=#1111#, productName=#buty#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1112#, productName=#czapka#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1113#, productName=#buty#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1114#, productName=#kalosze#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1115#, productName=#kurtka#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1116#, productName=#kurtka#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1117#, productName=#czapka#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1118#, productName=#nic#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1119#, productName=#nic#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1120#, productName=#nic#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1121#, productName=#nic#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}
+Product{id=#1122#, productName=#kapok#, price=#15#,  weight=#13#, color=#blue#, productCount=#8#}

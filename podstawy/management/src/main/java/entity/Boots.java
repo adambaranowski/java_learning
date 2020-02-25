@@ -22,7 +22,7 @@ public class Boots extends Product {
     @Override
     public String toString(){
         return super.toString() + "Boots{"+
-                "size=" + size + ", isNaturalSkin=" + isNaturalSkin +
-                "}";
+                "size=#" + size + "#, isNaturalSkin=#" + isNaturalSkin +
+                "#}";
     }
 }
