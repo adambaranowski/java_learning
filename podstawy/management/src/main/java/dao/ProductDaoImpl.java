@@ -10,7 +10,7 @@ import java.util.List;
 public class ProductDaoImpl implements ProductDao {
     private String fileName;
 
-    //CONSTRUCTOR
+
 
     public ProductDaoImpl(String fileName){
         this.fileName=fileName;

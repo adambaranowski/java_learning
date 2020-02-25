@@ -1,0 +1,5 @@
+User{id=#1111#, login=#puciak#, password=#xyz#}
+User{id=#1112#, login=#puciaki#, password=#xyz#}
+User{id=#1113#, login=#jan#, password=#xyz#}
+User{id=#1114#, login=#filip#, password=#xyz#}
+User{id=#1115#, login=#piotr#, password=#xyz#}
