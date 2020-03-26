@@ -1,31 +1,49 @@
 package service;
 
 import api.ProductService;
+import dao.ProductDaoImpl;
 import entity.Product;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 public class ProductServiceImpl implements ProductService {
-    public List<Product> products;
-    public ProductServiceImpl(){
-        this.products = new ArrayList<Product>();
+//    public List<Product> products;
+//    public ProductServiceImpl(){
+//        this.products = new ArrayList<Product>();
+//    }
+//    public ProductServiceImpl(List<Product> products){
+//        this.products = products;
+//    }
+
+    ProductDaoImpl productDao = new ProductDaoImpl();
+
+    private static ProductServiceImpl instance = null;
+    private ProductServiceImpl(){
+
     }
-    public ProductServiceImpl(List<Product> products){
-        this.products = products;
+    public static ProductServiceImpl getInstance(){
+        if(instance==null){
+            instance = new ProductServiceImpl();
+        }
+        return instance;
     }
+
+
+
    @Override
-    public List<Product> getAllProducts(){
-        return products;
+    public List<Product> getAllProducts() throws IOException {
+        return productDao.getAllProducts();
     }
 
     @Override
-    public Integer getNumberOfProducts(){
-        return products.size();
+    public Integer getNumberOfProducts() throws IOException {
+        return productDao.getAllProducts().size();
     }
 
     @Override
-    public Product getProductById(Long id){
-        for (Product p: products
+    public Product getProductById(Long id) throws IOException {
+        for (Product p: productDao.getAllProducts()
              ) {
             if(p.getId()==id){
                 return p;
@@ -35,8 +53,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductByName(String name){
-        for (Product p: products
+    public Product getProductByName(String name) throws IOException{
+        for (Product p: productDao.getAllProducts()
         ) {
             if(p.getProductName()==name){
                 return p;
@@ -48,8 +66,8 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public boolean ifProductNotEmptyByName(String name){
-        for (Product p: products
+    public boolean ifProductNotEmptyByName(String name) throws IOException {
+        for (Product p: productDao.getAllProducts()
              ) {
             if(p.getProductName().equals(name)){
                 if(p.getProductCount()>0){
@@ -65,8 +83,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean ifProductExistByName(String name){
-        for(Product p: products){
+    public boolean ifProductExistByName(String name) throws IOException {
+        for(Product p: productDao.getAllProducts()){
             if(p.getProductName().equals(name)){
                 return true;
             }
@@ -75,8 +93,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public boolean ifProductExistById(Long id){
-        for (Product p: products
+    public boolean ifProductExistById(Long id) throws IOException {
+        for (Product p: productDao.getAllProducts()
              ) {
             if(p.getId() == id){
                 return true;

@@ -15,7 +15,9 @@ public class ProductDaoImpl implements ProductDao {
     public ProductDaoImpl(String fileName){
         this.fileName=fileName;
     }
-
+    public ProductDaoImpl(){
+        this.fileName = "products.txt";
+    }
 
     @Override
     public void saveProduct(Product product) throws IOException{

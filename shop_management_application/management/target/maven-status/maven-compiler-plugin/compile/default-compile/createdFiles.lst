@@ -1,0 +1,12 @@
+entity\User.class
+service\ProductServiceImpl.class
+dao\UserDaoImpl.class
+entity\Product.class
+api\ProductService.class
+entity\Cloth.class
+api\UserService.class
+dao\ProductDaoImpl.class
+api\UserDao.class
+entity\Boots.class
+api\ProductDao.class
+service\UserServiceImpl.class

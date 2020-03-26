@@ -8,6 +8,17 @@ import entity.User;
 
 public class UserDaoImpl implements UserDao {
 
+    private UserDaoImpl(){
+
+    }
+    private  static UserDaoImpl instance = null;
+    public static UserDaoImpl getInstance(){
+        if(instance==null){
+            instance = new UserDaoImpl();
+        }
+        return instance;
+    }
+
     @Override
     public void removeUserById(Long userId) throws IOException{
 
