@@ -1,13 +1,20 @@
 package entity;
 
-public class User{
-    private long id;
+public class User {
+
+    public final static String USER_SEPARATOR = "#";
+
+    private Long id;
     private String login;
     private String password;
 
-    ///GETERY I SETERY///
+    public User(Long id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+    }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -19,21 +26,8 @@ public class User{
         return password;
     }
 
-    //GENERATOR//
-
-    public User(long id, String login, String password) {
-        this.id = id;
-        this.login = login;
-        this.password = password;
-    }
-
     @Override
-    public String toString(){
-        return "User{"+
-                "id=#" + id +
-                "#, login=#" + login +
-                "#, password=#" + password +"#}";
+    public String toString() {
+        return id + USER_SEPARATOR + login + USER_SEPARATOR + password;
     }
-
-
 }

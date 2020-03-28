@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class UserValidator {
 
+
     //Singleton
     private static UserValidator instance = null;
     private UserValidator(){

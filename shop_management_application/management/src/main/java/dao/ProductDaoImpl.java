@@ -2,242 +2,91 @@ package dao;
 
 import api.ProductDao;
 import entity.Product;
+import entity.parser.ProductParser;
+import utils.FileUtils;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDaoImpl implements ProductDao {
-    private String fileName;
 
+    private static final String fileName = "products.data";
+    private static ProductDao instance = null;
 
-
-    public ProductDaoImpl(String fileName){
-        this.fileName=fileName;
-    }
-    public ProductDaoImpl(){
-        this.fileName = "products.txt";
-    }
-
-    @Override
-    public void saveProduct(Product product) throws IOException{
-
-            FileOutputStream fileOutputStream = new FileOutputStream(fileName, true);
-            PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-            printWriter.println(product.toString());
-
-            printWriter.close();
-            fileOutputStream.close();
-
+    private ProductDaoImpl() {
+        try {
+            FileUtils.createNewFile(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void saveProducts(List<Product> products) throws IOException{
-
-        FileOutputStream fileOutputStream = new FileOutputStream(fileName, false);
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-        for (Product p: products
-             ) {
-            printWriter.println(p.toString());
-
+    public static ProductDao getInstance() {
+        if (instance == null) {
+            instance = new ProductDaoImpl();
         }
 
-        printWriter.close();
-        fileOutputStream.close();
+        return instance;
     }
 
-    @Override
-    public void removeProductById(Long productId)throws IOException{
 
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+    public void saveProduct(Product product) throws IOException {
+        List<Product> products = getAllProducts();
+        products.add(product);
+        saveProducts(products);
+    }
 
-        List<String[] > fileInList= new ArrayList<String[] >();
-        String line = bufferedReader.readLine();
-
-        while (line!=null){
-            fileInList.add(line.split("#"));
-            line=bufferedReader.readLine();
-        }
-
-        outer: for (String[] lineTable: fileInList
-             ) {
-            for (String value: lineTable
-                 ) {
-                if(value.equals(productId.toString())){
-                    fileInList.remove(lineTable);
-                    break outer;
-                }
-
-            }
-
-        }
-
-        FileOutputStream fileOutputStream = new FileOutputStream(fileName, false);
-
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-        int x = 1;
-        for (String[] lineTable : fileInList
-             ) {
-            printWriter.print("Product{" +
-                    "id=#" + lineTable[1] +
-                    "#, productName=#" + lineTable[3] +
-                    "#, price=#" + lineTable[5] +
-                    "#, weight=#" + lineTable[7] +
-                    "#, color=#" + lineTable[9] +
-                    "#, productCount=#" + lineTable[11] + "#}");
-            if(x<fileInList.size()){
-                printWriter.println();
-            }
-            x++;
+    public void saveProducts(List<Product> products) throws FileNotFoundException {
+        FileUtils.clearFile(fileName);
+        PrintWriter printWriter = new PrintWriter(new FileOutputStream(fileName, true));
+        for(Product product : products) {
+            printWriter.write(product.toString() + "\n");
         }
         printWriter.close();
-        fileOutputStream.close();
     }
 
-    @Override
-   public  void removeProductByName(String productName)throws IOException{
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+    public void removeProductById(Long productId) throws IOException {
+        List<Product> products = getAllProducts();
 
-        List<String[] > fileInList= new ArrayList<String[] >();
-        String line = bufferedReader.readLine();
-
-        while (line!=null){
-            fileInList.add(line.split("#"));
-            line=bufferedReader.readLine();
-        }
-
-        outer: for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(productName)){
-                    fileInList.remove(lineTable);
-                    break outer;
-                }
-
+        for(int i=0;i<products.size(); i++) {
+            boolean isFoundProduct = products.get(i).getId().equals(productId);
+            if (isFoundProduct) {
+                products.remove(i);
             }
-
         }
 
-        FileOutputStream fileOutputStream = new FileOutputStream(fileName, false);
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-        int x = 1;
-        for (String[] lineTable : fileInList
-        ) {
-            printWriter.print("Product{" +
-                    "id=#" + lineTable[1] +
-                    "#, productName=#" + lineTable[3] +
-                    "#, price=#" + lineTable[5] +
-                    "#, weight=#" + lineTable[7] +
-                    "#, color=#" + lineTable[9] +
-                    "#, productCount=#" + lineTable[11] + "#}");
-            if(x<fileInList.size()){
-                printWriter.println();
-            }
-            x++;
-        }
-        printWriter.close();
-        fileOutputStream.close();
+        saveProducts(products);
     }
 
-    @Override
-    public List<Product> getAllProducts()throws IOException{
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
+    public void removeProductByName(String productName) throws IOException {
+        List<Product> products = getAllProducts();
 
-        List<Product> products = new ArrayList<>();
-
-        List<String[] > fileInList= new ArrayList<String[] >();
-        String line = bufferedReader.readLine();
-
-        while (line!=null){
-            fileInList.add(line.split("#"));
-            line=bufferedReader.readLine();
+        for(int i=0;i<products.size(); i++) {
+            boolean isFoundProduct = products.get(i).getProductName().equals(productName);
+            if (isFoundProduct) {
+                products.remove(i);
+            }
         }
 
+        saveProducts(products);
+    }
 
-        int x = 1;
-        for (String[] lineTable : fileInList
-        ) {
+    public List<Product> getAllProducts() throws IOException {
+        List<Product> products = new ArrayList<Product>();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
 
-            products.add(new Product(Long.parseLong(lineTable[1]), lineTable[3], Double.parseDouble(lineTable[5]), Double.parseDouble(lineTable[7]), lineTable[9], Integer.parseInt(lineTable[11])));
-
-            x++;
+        String readLine = bufferedReader.readLine();
+        while(readLine != null) {
+            Product product = ProductParser.stringToProduct(readLine);
+            if (product != null) {
+                products.add(product);
+            }
+            readLine = bufferedReader.readLine();
         }
-
-
         bufferedReader.close();
-        fileReader.close();
+
         return products;
-    }
-
-
-    @Override
-    public Product getProductById(Long productId)throws IOException{
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[] > fileInList= new ArrayList<String[] >();
-        String line = bufferedReader.readLine();
-
-        Product product = null;
-
-        while (line!=null){
-            fileInList.add(line.split("#"));
-            line=bufferedReader.readLine();
-        }
-
-        outer: for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(productId.toString())){
-                    product = new Product(Long.parseLong(lineTable[1]), lineTable[3], Double.parseDouble(lineTable[5]), Double.parseDouble(lineTable[7]), lineTable[9], Integer.parseInt(lineTable[11]));
-
-                    break outer;
-                }
-
-            }
-
-        }
-
-        return product;
-    }
-
-    @Override
-    public Product getProductByName(String productName)throws IOException{
-        FileReader fileReader = new FileReader(fileName);
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[] > fileInList= new ArrayList<String[] >();
-        String line = bufferedReader.readLine();
-
-        Product product = null;
-
-        while (line!=null){
-            fileInList.add(line.split("#"));
-            line=bufferedReader.readLine();
-        }
-
-        outer: for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(productName)){
-                    product = new Product(Long.parseLong(lineTable[1]), lineTable[3], Double.parseDouble(lineTable[5]), Double.parseDouble(lineTable[7]), lineTable[9], Integer.parseInt(lineTable[11]));
-
-                    break outer;
-                }
-            }
-        }
-
-        return product;
     }
 
 

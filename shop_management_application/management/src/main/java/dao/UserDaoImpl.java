@@ -1,284 +1,90 @@
 package dao;
 
 import api.UserDao;
+import entity.User;
+import entity.parser.UserParser;
+import utils.FileUtils;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import entity.User;
 
 public class UserDaoImpl implements UserDao {
 
-    private UserDaoImpl(){
 
+    private static final String fileName = "users.data";
+    private static UserDaoImpl instance = null;
+
+    private UserDaoImpl() {
+        try {
+            FileUtils.createNewFile(fileName);
+        } catch (IOException e) {
+            System.out.println("Error with file path");
+            // exit zamyka całą aplikację
+            System.exit(-1);
+        }
     }
-    private  static UserDaoImpl instance = null;
-    public static UserDaoImpl getInstance(){
-        if(instance==null){
+
+    public static UserDaoImpl getInstance() {
+        if (instance == null) {
             instance = new UserDaoImpl();
         }
+
         return instance;
     }
 
-    @Override
-    public void removeUserById(Long userId) throws IOException{
+    public void saveUser(User user) throws IOException {
+        List<User> users = getAllUsers();
+        users.add(user);
+        saveUsers(users);
+    }
 
-        FileReader fileReader = new FileReader("src/main/java/obslugaplikow/users.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[]> fileInList = new ArrayList<String[]>();
-
-        String line = bufferedReader.readLine();
-
-        while(line != null){
-            fileInList.add(line.split("#"));
-            line = bufferedReader.readLine();
+    public void saveUsers(List<User> users) throws FileNotFoundException {
+        PrintWriter printWriter = new PrintWriter(new FileOutputStream(fileName, true));
+        for(User user : users) {
+            printWriter.write(user.toString() + "\n");
         }
-
-        outer:
-        for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(userId.toString())){
-                    fileInList.remove(lineTable);
-                    break outer;
-                }
-
-            }
-
-        }
-
-        FileOutputStream fileOutputStream = new FileOutputStream("src/main/java/obslugaplikow/users.txt", false);
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-        int x = 1;
-        for (String[] lineTable: fileInList
-        ) {
-
-            printWriter.print(
-                    "User{id=#" + lineTable[1] +
-                            "#, login=#" + lineTable[3] +
-                            "#, password=#" + lineTable[5] +
-                            "#}"
-            );
-            if(x<fileInList.size()){
-                printWriter.println();
-            }
-            x++;
-        }
-
         printWriter.close();
-        fileOutputStream.close();
 
     }
 
-    @Override
-    public void saveUser(User user) throws IOException{
+    public void removeUserById(Long userId) throws IOException {
+        List<User> users = getAllUsers();
 
-        FileOutputStream fileOutputStream = new FileOutputStream("src/main/java/obslugaplikow/users.txt", true);
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-        printWriter.println();
-        printWriter.print(user.toString());
-
-        printWriter.close();
-        fileOutputStream.close();
-
-    }
-
-    @Override
-    public void saveUsers(List<User> users)throws IOException{
-
-        FileOutputStream fileOutputStream = new FileOutputStream("src/main/java/obslugaplikow/users.txt", true);
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
-
-        for (User user: users
-        ) {
-            printWriter.println();
-            printWriter.print(user.toString());
-
-        }
-
-        printWriter.close();
-        fileOutputStream.close();
-
-
-    }
-
-    @Override
-    public void removeUserByLogin(String login) throws IOException{
-
-        FileReader fileReader = new FileReader("src/main/java/obslugaplikow/users.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[]> fileInList = new ArrayList<String[]>();
-
-        String line = bufferedReader.readLine();
-
-
-        while(line!=null){
-            fileInList.add(line.split("#"));
-            line=bufferedReader.readLine();
-        }
-
-
-        outer:
-        for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(login)){
-                    fileInList.remove(lineTable);
-                    break outer;
-                }
-
+        for(int i=0;i<users.size(); i++) {
+            boolean isFoundUser = users.get(i).getId().equals(userId);
+            if (isFoundUser) {
+                users.remove(i);
             }
-
         }
 
-        FileOutputStream fileOutputStream = new FileOutputStream("src/main/java/obslugaplikow/users.txt", false);
-        PrintWriter printWriter = new PrintWriter(fileOutputStream);
+        saveUsers(users);
+    }
 
-        int x = 1;
-        for (String[] lineTable: fileInList
-        ) {
-            printWriter.print(
-                    "User{id=#" + lineTable[1] +
-                            "#, login=#" + lineTable[3] +
-                            "#, password=#" + lineTable[5] +
-                            "#}"
-            );
-            if(x < fileInList.size()){
-                printWriter.println();
+    public void removeUserByLogin(String login) throws IOException {
+        List<User> users = getAllUsers();
+
+        for(int i=0;i<users.size(); i++) {
+            boolean isFoundUser = users.get(i).getLogin().equals(login);
+            if (isFoundUser) {
+                users.remove(i);
             }
-
         }
 
-        printWriter.close();
-        fileOutputStream.close();
-
-
+        saveUsers(users);
     }
 
-    @Override
-    public User getUserById(Long Id)throws IOException{
+    public List<User> getAllUsers() throws IOException {
+        List<User> users = new ArrayList<User>();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
 
-        FileReader fileReader = new FileReader("src/main/java/obslugaplikow/users.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[]> fileInList = new ArrayList<String[]>();
-
-        String line = bufferedReader.readLine();
-        while (line != null){
-            fileInList.add(line.split("#"));
-            line = bufferedReader.readLine();
-
+        String readLine = bufferedReader.readLine();
+        while(readLine != null) {
+            User user = UserParser.stringToUser(readLine);
+            users.add(user);
+            readLine = bufferedReader.readLine();
         }
 
-        outer:
-        for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(Id.toString())){
-                    bufferedReader.close();
-                    fileReader.close();
-
-                    return new User(Long.parseLong(lineTable[1]), lineTable[3], lineTable[5]);
-                }
-
-            }
-
-        }
-        bufferedReader.close();
-        fileReader.close();
-        return null;
+        return users;
     }
-
-    @Override
-    public User getUserByLogin(String login) throws  IOException{
-        FileReader fileReader = new FileReader("src/main/java/obslugaplikow/users.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[]> fileInList = new ArrayList<String[]>();
-        String line = bufferedReader.readLine();
-
-        while(line != null){
-            fileInList.add(line.split("#"));
-            line = bufferedReader.readLine();
-        }
-
-        for (String[] lineTable: fileInList
-        ) {
-            for (String value: lineTable
-            ) {
-                if(value.equals(login)){
-                    bufferedReader.close();
-                    fileReader.close();
-                    return new User(Long.parseLong(lineTable[1]), lineTable[3], lineTable[5]);
-
-                }
-            }
-
-        }
-        bufferedReader.close();
-        fileReader.close();
-        return null;
-    }
-
-    @Override
-    public List<User> getAllUsers() throws IOException{
-
-        FileReader fileReader = new FileReader("src/main/java/obslugaplikow/users.txt");
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-        List<String[]> fileInList  = new ArrayList<String[]>();
-
-        String line = bufferedReader.readLine();
-        while (line != null){
-            fileInList.add(line.split("#"));
-            line = bufferedReader.readLine();
-
-        }
-
-        List<User> Users = new ArrayList<User>();
-
-        for (String[] lineTable: fileInList
-        ) {
-            Users.add(new User(Long.parseLong(lineTable[1]), lineTable[3], lineTable[5]));
-        }
-
-        return Users;
-    }
-
-    /*
-    public static void main(String[] args)throws IOException{
-        //removeUserById((long)1111);
-
-        ///User user = new User(4567, "puciakus", "xyz");
-        ///saveUser(user);
-
-        //List<User> users = new ArrayList<User>();
-        ///users.add(new User(6666, "puciakul", "xyz"));
-        ///users.add(new User(6667, "puciakum", "xyz"));
-
-        //saveUsers(users);
-
-        //removeUserByLogin("puciakul");
-
-        System.out.println(getUserById((long)1114).toString());
-        System.out.println(getUserByLogin("jan").toString());
-
-        System.out.println();
-
-        for (User user: getAllUsers()
-        ) {
-            System.out.println(user.toString());
-
-        }
-
-
-
-    }
-*/
 }

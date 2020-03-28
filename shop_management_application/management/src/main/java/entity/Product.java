@@ -1,25 +1,35 @@
 package entity;
 
 public class Product {
-    private long id;
+
+    public final static String PRODUCT_SEPARATOR = "#";
+    public final static char PRODUCT_TYPE = 'P';
+
+    private Long id;
     private String productName;
-    private double price;
-    private double weight;
+    private Float price;
+    private Float weight;
     private String color;
-    private int productCount;
+    private Integer productCount;
 
+    public Product(Long id, String productName, Float price, Float weight, String color, Integer productCount) {
+        this.id = id;
+        this.productName = productName;
+        this.price = price;
+        this.weight = weight;
+        this.color = color;
+        this.productCount=productCount;
+    }
 
-    //SETTERY//
-    public void setPrice(double price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 
-    public void setProductCount(int productCount) {
+    public void setProductCount(Integer productCount) {
         this.productCount = productCount;
     }
 
-    //GETTERY//
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -27,11 +37,11 @@ public class Product {
         return productName;
     }
 
-    public double getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public double getWeight() {
+    public Float getWeight() {
         return weight;
     }
 
@@ -39,29 +49,16 @@ public class Product {
         return color;
     }
 
-    public int getProductCount() {
+    public Integer getProductCount() {
         return productCount;
     }
 
-    //CONSTRUCTOR//
-
-    public Product(long id, String productName, double price,
-                   double weight, String color, int productCount) {
-        this.id = id;
-        this.productName = productName;
-        this.price = price;
-        this.weight = weight;
-        this.color = color;
-        this.productCount = productCount;
+    protected String getBasicProductString() {
+        return id + PRODUCT_SEPARATOR + productName + PRODUCT_SEPARATOR + price + PRODUCT_SEPARATOR + weight + PRODUCT_SEPARATOR + color + PRODUCT_SEPARATOR + productCount;
     }
 
     @Override
-    public String toString(){
-        return "Product{" +
-                "id=#" + id +
-                "#, productName=#" + productName +
-                "#, weight=#" + weight +
-                "#, color=#" + color +
-                "#, productCount=#" + productCount + "#}";
+    public String toString() {
+        return PRODUCT_TYPE + PRODUCT_SEPARATOR + getBasicProductString();
     }
 }

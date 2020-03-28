@@ -1,8 +1,13 @@
 package service;
 
+import api.UserDao;
 import api.UserService;
 import dao.UserDaoImpl;
 import entity.User;
+import exceptions.UserLoginAlreadyExistException;
+import exceptions.UserShortLengthLoginException;
+import exceptions.UserShortLengthPasswordException;
+import validator.UserValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,71 +15,97 @@ import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
-//    public List<User> users;
-////
-////    public UserServiceImpl(){
-////        this.users = new ArrayList<User>();
-////
-////    }
+    private static UserServiceImpl instance = null;
+    private UserDao userDao = UserDaoImpl.getInstance();
+    private UserValidator userValidator = UserValidator.getInstance();
 
-    UserDaoImpl userDao = UserDaoImpl.getInstance();
-
-    private UserServiceImpl(){
-
+    private UserServiceImpl() {
     }
 
-    private static UserServiceImpl instance = null;
-
-    public static UserServiceImpl getInstance(){
-        if(instance==null){
+    public static UserServiceImpl getInstance() {
+        if (instance == null) {
             instance = new UserServiceImpl();
         }
-        return  instance;
+        return instance;
     }
 
-   // public UserServiceImpl(List<User> users){
-    //   this.users = users;
-    //}
+    public List<User> getAllUsers() throws IOException {
+        return userDao.getAllUsers();
+    }
 
-    @Override
-    public User getUserByName(String username) throws IOException {
-        for (User u: userDao.getAllUsers()
-             ) {
-            if(u.getLogin().equals(username)){
-                return u;
+    public boolean addUser(User user) {
+        try {
+            if (isLoginAlreadyExist(user.getLogin())) {
+                throw new UserLoginAlreadyExistException();
+            }
+
+            if (userValidator.isValidate(user)) {
+                userDao.saveUser(user);
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    private boolean isLoginAlreadyExist(String login) {
+        User user = getUserByLogin(login);
+
+        return user != null;
+    }
+
+    public void removeUserById(Long userId) throws IOException {
+        userDao.removeUserById(userId);
+    }
+
+    public User getUserById(Long userId) throws IOException {
+        List<User> users = getAllUsers();
+
+        for (User user : users
+        ) {
+            boolean isFoundUser = user.getId().equals(userId);
+            if (isFoundUser) {
+                return user;
             }
 
         }
+
         return null;
     }
 
-    @Override
-    public List<User> getAllUsers() throws IOException {
-       return userDao.getAllUsers();
-    }
+    public User getUserByLogin(String login) {
+        List<User> users = null;
 
-    @Override
-    public void addUser(User user) throws IOException {
-        UserValidator userValidator = UserValidator.getInstance();
-        if (userValidator.isValidate(user)) {
-            userDao.saveUser(user);
+        try {
+            users = getAllUsers();
+            for (User user : users
+            ) {
+                boolean isFoundUser = user.getLogin().equals(login);
+                if (isFoundUser) {
+                    return user;
+                }
 
-
-        }
-
-    }
-
-    @Override
-    public void removeUserById(Long userId) throws IOException {
-        for(int i = 0; i < userDao.getAllUsers().size(); i++){
-            //wyciągniecie itego usera z listy
-            User userFromList = userDao.getAllUsers().get(i);
-            //jeżeli id usera z listy równe podanemu to usuwamy
-            if(userFromList.getId() == userId){
-                userDao.getAllUsers().remove(i);
-                break;
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        return null;
     }
+
+    public boolean isCorrectLoginAndPassword(String login, String password) {
+        User foundUser = getUserByLogin(login);
+
+        if (foundUser == null) {
+            return false;
+        }
+
+        boolean isCorrectLogin = foundUser.getLogin().equals(login);
+        boolean isCorrectPass = foundUser.getPassword().equals(password);
+
+        return isCorrectLogin && isCorrectPass;
+    }
+
 
 }
